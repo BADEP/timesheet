@@ -46,5 +46,7 @@ class TestSaleTimesheetTimeline(BaseCommon):
         self.assertEqual(
             task.planned_date_end, fields.Datetime.from_string("2024-08-05 12:00:00")
         )
-        self.assertEqual(task.date_deadline, fields.Date.from_string("2024-08-05"))
+        self.assertEqual(
+            task.date_deadline, fields.Datetime.from_string("2024-08-05 12:00:00")
+        )
         self.assertEqual(task.user_ids, self.user)
