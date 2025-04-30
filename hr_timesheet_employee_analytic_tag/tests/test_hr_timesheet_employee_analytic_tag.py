@@ -1,24 +1,17 @@
-# Copyright 2022 Tecnativa - Víctor Martínez
+# Copyright 2022-2025 Tecnativa - Víctor Martínez
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.tests import Form, common, new_test_user
+from odoo import Command
+from odoo.tests import Form, new_test_user
 from odoo.tests.common import users
 
+from odoo.addons.base.tests.common import BaseCommon
 
-class TestHrTimesheetEmployeeAnalyticTag(common.TransactionCase):
+
+class TestHrTimesheetEmployeeAnalyticTag(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(
-            context=dict(
-                cls.env.context,
-                mail_create_nolog=True,
-                mail_create_nosubscribe=True,
-                mail_notrack=True,
-                no_reset_password=True,
-                tracking_disable=True,
-            )
-        )
         cls.tag_1 = cls.env["account.analytic.tag"].create({"name": "Test tag 1"})
         cls.tag_2 = cls.env["account.analytic.tag"].create({"name": "Test tag 2"})
         cls.project = cls.env["project.project"].create(
@@ -33,7 +26,7 @@ class TestHrTimesheetEmployeeAnalyticTag(common.TransactionCase):
         cls.employee_1 = cls.env["hr.employee"].create(
             {
                 "name": "Test employee 1",
-                "timesheet_analytic_tag_ids": [(6, 0, cls.tag_1.ids)],
+                "timesheet_analytic_tag_ids": [Command.set(cls.tag_1.ids)],
                 "user_id": cls.user.id,
             }
         )
@@ -53,7 +46,7 @@ class TestHrTimesheetEmployeeAnalyticTag(common.TransactionCase):
             "amount": 10,
         }
         if tag:
-            vals["tag_ids"] = [(6, 0, tag.ids)]
+            vals["tag_ids"] = [Command.set(tag.ids)]
         return self.account_analytic_line_model.create(vals)
 
     def _create_timesheet_item(self):

@@ -30,12 +30,3 @@ msgstr "Etichette analitiche"
 #: model:ir.model,name:hr_timesheet_employee_analytic_tag.model_hr_employee
 msgid "Employee"
 msgstr "Dipendente"
-
-#~ msgid "Display Name"
-#~ msgstr "Nome visualizzato"
-
-#~ msgid "ID"
-#~ msgstr "ID"
-
-#~ msgid "Last Modified on"
-#~ msgstr "Ultima modifica il"

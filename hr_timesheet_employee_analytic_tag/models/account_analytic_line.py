@@ -1,7 +1,7 @@
-# Copyright 2022 Tecnativa - Víctor Martínez
+# Copyright 2022-2025 Tecnativa - Víctor Martínez
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, models
+from odoo import Command, api, models
 
 
 class AccountAnalyticLine(models.Model):
@@ -16,6 +16,7 @@ class AccountAnalyticLine(models.Model):
                 if employee.timesheet_analytic_tag_ids:
                     vals["tag_ids"] = vals.get("tag_ids", [])
                     vals["tag_ids"] += [
-                        (4, tag.id) for tag in employee.timesheet_analytic_tag_ids
+                        Command.link(tag.id)
+                        for tag in employee.timesheet_analytic_tag_ids
                     ]
         return super().create(vals_list)
