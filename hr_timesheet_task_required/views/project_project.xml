@@ -25,8 +25,7 @@ License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
         <field name="model">project.project</field>
         <field name="inherit_id" ref="hr_timesheet.project_invoice_form" />
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='group_time_managment']" position="after">
-                <setting />
+            <xpath expr="//group[@name='group_time_managment']" position="inside">
                 <setting
                     id="timesheet_task_settings"
                     help="Set tasks on timesheet as a mandatory field"

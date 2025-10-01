@@ -3,10 +3,11 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo.exceptions import ValidationError
-from odoo.tests import TransactionCase
+
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestHrTimesheetTaskRequired(TransactionCase):
+class TestHrTimesheetTaskRequired(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

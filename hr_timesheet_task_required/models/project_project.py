@@ -15,6 +15,6 @@ class ProjectProject(models.Model):
     @api.model
     def _default_is_timesheet_task_required(self):
         company = self.env["res.company"].browse(
-            self._context.get("company_id", self.env.user.company_id.id)
+            self.env.context.get("company_id", self.env.user.company_id.id)
         )
         return company.is_timesheet_task_required
