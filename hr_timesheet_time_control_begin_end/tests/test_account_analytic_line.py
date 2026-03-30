@@ -12,10 +12,10 @@ class TestAccountAnalyticLine(BaseCommon):
     def setUpClass(cls):
         super().setUpClass()
         cls.employee = cls.env.ref("hr.employee_admin")
-        cls.project = cls.env.ref("project.project_project_1")
+        cls.employee.tz = "Europe/Brussels"  # UTC+1/+2
+        cls.project = cls.env["project.project"].create({"name": "Test Project"})
 
     def test_compute_time_by_datetime(self):
-        self.employee.tz = "Europe/Brussels"  # UTC+1/+2
         aal = self.env["account.analytic.line"].create(
             {
                 "name": "Test Line",
@@ -129,7 +129,7 @@ class TestAccountAnalyticLine(BaseCommon):
         hour_uom = self.env.ref("uom.product_uom_hour")
         form = Form(
             self.env["account.analytic.line"].with_context(
-                default_product_uom_id=hour_uom.id
+                default_product_uom_id=hour_uom.id, default_employee_id=self.employee.id
             ),
             view=self.env.ref(
                 "hr_timesheet_time_control_begin_end.hr_timesheet_line_form"
@@ -144,7 +144,7 @@ class TestAccountAnalyticLine(BaseCommon):
         hour_uom = self.env.ref("uom.product_uom_hour")
         form = Form(
             self.env["account.analytic.line"].with_context(
-                default_product_uom_id=hour_uom.id
+                default_product_uom_id=hour_uom.id, default_employee_id=self.employee.id
             ),
             view=self.env.ref(
                 "hr_timesheet_time_control_begin_end.hr_timesheet_line_form"
@@ -158,6 +158,7 @@ class TestAccountAnalyticLine(BaseCommon):
         self.assertEqual(form.unit_amount, 2.0)
 
     def test_onchange_time_end_calendar_context(self):
+        self.employee.tz = "Europe/Berlin"  # UTC+1/+2 (same as Brussels)
         hour_uom = self.env.ref("uom.product_uom_hour")
         form = Form(
             self.env["account.analytic.line"].with_context(
@@ -169,6 +170,7 @@ class TestAccountAnalyticLine(BaseCommon):
                 grid_anchor="2025-10-22",
                 group_expand=True,
                 is_timesheet=1,
+                default_employee_id=self.employee.id,
                 is_my_timesheets=1,
                 default_date_time="2025-10-20 03:15:00",
                 default_date_time_end="2025-10-20 07:00:00",
@@ -183,6 +185,7 @@ class TestAccountAnalyticLine(BaseCommon):
         self.assertEqual(form.date, date(2025, 10, 20))
         self.assertEqual(form.date_time, datetime(2025, 10, 20, 3, 15, 0))
         self.assertEqual(form.date_time_end, datetime(2025, 10, 20, 7, 0, 0))
+        # Note: Time begin is computed from date_time using UTC timezone (3.25 = 3:15)
         self.assertEqual(form.time_begin, 5.25)
         self.assertEqual(form.time_end, 9.0)
         self.assertEqual(form.unit_amount, 3.75)

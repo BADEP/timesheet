@@ -5,7 +5,7 @@
         <field name="model">project.task</field>
         <field
             name="inherit_id"
-            ref="project_timesheet_time_control.view_task_form2_inherited"
+            ref="hr_timesheet_time_control.view_task_form2_inherited"
         />
         <field name="arch" type="xml">
             <!-- Sub-tree view for timesheet_ids -->

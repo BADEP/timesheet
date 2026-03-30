@@ -25,7 +25,7 @@ class AccountAnalyticLine(models.Model):
                 tz = (
                     pytz.timezone(record.employee_id.tz)
                     if record.employee_id.tz
-                    else pytz.timezone(self.env.user.tz)
+                    else pytz.timezone(self.env.user.tz or "UTC")
                 )
                 date = record.date_time.astimezone(tz)
                 record.time_begin = date.hour + (date.minute / 60.0)
@@ -39,7 +39,7 @@ class AccountAnalyticLine(models.Model):
                 tz = (
                     pytz.timezone(record.employee_id.tz)
                     if record.employee_id.tz
-                    else pytz.timezone(self.env.user.tz)
+                    else pytz.timezone(self.env.user.tz or "UTC")
                 )
                 date = record.date_time_end.astimezone(tz)
                 record.time_end = date.hour + (date.minute / 60.0)
@@ -51,7 +51,7 @@ class AccountAnalyticLine(models.Model):
             tz = (
                 pytz.timezone(record.employee_id.tz)
                 if record.employee_id.tz
-                else pytz.timezone(self.env.user.tz)
+                else pytz.timezone(self.env.user.tz or "UTC")
             )
             date = record.date_time.astimezone(tz)
             hours = int(record.time_begin)
@@ -73,7 +73,7 @@ class AccountAnalyticLine(models.Model):
             tz = (
                 pytz.timezone(record.employee_id.tz)
                 if record.employee_id.tz
-                else pytz.timezone(self.env.user.tz)
+                else pytz.timezone(self.env.user.tz or "UTC")
             )
             date = record.date_time.astimezone(tz)
 

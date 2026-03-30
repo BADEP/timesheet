@@ -4,7 +4,7 @@
         <field name="model">account.analytic.line</field>
         <field
             name="inherit_id"
-            ref="project_timesheet_time_control.account_analytic_line_tree"
+            ref="hr_timesheet_time_control.account_analytic_line_tree"
         />
         <field name="arch" type="xml">
             <field name="date" position="attributes">
@@ -28,7 +28,7 @@
         <field name="model">account.analytic.line</field>
         <field
             name="inherit_id"
-            ref="project_timesheet_time_control.hr_timesheet_line_form"
+            ref="hr_timesheet_time_control.hr_timesheet_line_form"
         />
         <field name="arch" type="xml">
             <field name="date" position="attributes">

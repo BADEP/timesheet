@@ -2,13 +2,13 @@
 
 {
     "name": "HR Timesheet Time Control begin/end",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Project",
     "author": "glueckkanja AG, Odoo Community Association (OCA)",
     "maintainers": ["CRogos"],
     "website": "https://github.com/OCA/timesheet",
     "depends": [
-        "project_timesheet_time_control",
+        "hr_timesheet_time_control",
     ],
     "data": [
         "views/account_analytic_line_view.xml",

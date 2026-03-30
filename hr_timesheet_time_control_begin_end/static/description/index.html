@@ -374,39 +374,72 @@ ul.auto-toc {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! source digest: sha256:3db86c7fd9e985dd9bfcfec57d6a12cfe1c783473b3a617fe5d0de417519e5c6
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/license-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/OCA/timesheet/tree/18.0/hr_timesheet_time_control_begin_end"><img alt="OCA/timesheet" src="https://img.shields.io/badge/github-OCA%2Ftimesheet-lightgray.png?logo=github" /></a> <a class="reference external image-reference" href="https://translation.odoo-community.org/projects/timesheet-18-0/timesheet-18-0-hr_timesheet_time_control_begin_end"><img alt="Translate me on Weblate" src="https://img.shields.io/badge/weblate-Translate%20me-F47D42.png" /></a> <a class="reference external image-reference" href="https://runboat.odoo-community.org/builds?repo=OCA/timesheet&amp;target_branch=18.0"><img alt="Try me on Runboat" src="https://img.shields.io/badge/runboat-Try%20me-875A7B.png" /></a></p>
+<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/license-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/OCA/timesheet/tree/19.0/hr_timesheet_time_control_begin_end"><img alt="OCA/timesheet" src="https://img.shields.io/badge/github-OCA%2Ftimesheet-lightgray.png?logo=github" /></a> <a class="reference external image-reference" href="https://translation.odoo-community.org/projects/timesheet-19-0/timesheet-19-0-hr_timesheet_time_control_begin_end"><img alt="Translate me on Weblate" src="https://img.shields.io/badge/weblate-Translate%20me-F47D42.png" /></a> <a class="reference external image-reference" href="https://runboat.odoo-community.org/builds?repo=OCA/timesheet&amp;target_branch=19.0"><img alt="Try me on Runboat" src="https://img.shields.io/badge/runboat-Try%20me-875A7B.png" /></a></p>
 <p>This module adds begin and end time to analytic line, similar to
 <a class="reference external" href="../hr_timesheet_begin_end">hr_timesheet_begin_end</a> but based on
 <a class="reference external" href="https://github.com/OCA/project/tree/18.0/project_timesheet_time_control">project_timesheet_time_control</a>.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#bug-tracker" id="toc-entry-1">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="toc-entry-2">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="toc-entry-3">Authors</a></li>
-<li><a class="reference internal" href="#maintainers" id="toc-entry-4">Maintainers</a></li>
+<li><a class="reference internal" href="#usage" id="toc-entry-1">Usage</a><ul>
+<li><a class="reference internal" href="#timesheet-list-view" id="toc-entry-2">Timesheet List View</a></li>
+<li><a class="reference internal" href="#timesheet-form-view" id="toc-entry-3">Timesheet Form View</a></li>
+<li><a class="reference internal" href="#project-task-inline-timesheet-view" id="toc-entry-4">Project Task – Inline Timesheet View</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bug-tracker" id="toc-entry-5">Bug Tracker</a></li>
+<li><a class="reference internal" href="#credits" id="toc-entry-6">Credits</a><ul>
+<li><a class="reference internal" href="#authors" id="toc-entry-7">Authors</a></li>
+<li><a class="reference internal" href="#maintainers" id="toc-entry-8">Maintainers</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="usage">
+<h2><a class="toc-backref" href="#toc-entry-1">Usage</a></h2>
+<p>After installing this module, two new fields become available on every
+timesheet entry: <strong>Begin Time</strong> and <strong>End Time</strong>. These fields display
+the start and end times of a work session in the employee’s local
+timezone and keep the underlying <tt class="docutils literal">date_time</tt> / <tt class="docutils literal">date_time_end</tt>
+datetime fields synchronized automatically.</p>
+<div class="section" id="timesheet-list-view">
+<h3><a class="toc-backref" href="#toc-entry-2">Timesheet List View</a></h3>
+<p>The <strong>Begin Time</strong> and <strong>End Time</strong> columns are shown by default and can
+be toggled like any other optional column.</p>
+<img alt="Timesheet list view with Begin Time and End Time columns" src="https://raw.githubusercontent.com/OCA/timesheet/19.0/hr_timesheet_time_control_begin_end/static/img/01_timesheet_list_view.png" />
+</div>
+<div class="section" id="timesheet-form-view">
+<h3><a class="toc-backref" href="#toc-entry-3">Timesheet Form View</a></h3>
+<p><strong>Duration</strong> field. Entering a <strong>Begin Time</strong> and <strong>End Time</strong>
+automatically recalculates the duration.</p>
+<img alt="Timesheet form view with Begin Time and End Time fields" src="https://raw.githubusercontent.com/OCA/timesheet/19.0/hr_timesheet_time_control_begin_end/static/img/02_timesheet_form_view.png" />
+</div>
+<div class="section" id="project-task-inline-timesheet-view">
+<h3><a class="toc-backref" href="#toc-entry-4">Project Task – Inline Timesheet View</a></h3>
+<p>Inside a project task the inline timesheet list also exposes the <strong>Begin
+Time</strong> and <strong>End Time</strong> columns, making it easy to review the exact work
+intervals logged against a task without leaving the task form.</p>
+<img alt="Task inline timesheet view with Begin and End Time" src="https://raw.githubusercontent.com/OCA/timesheet/19.0/hr_timesheet_time_control_begin_end/static/img/03_task_timesheet_view.png" />
+</div>
+</div>
 <div class="section" id="bug-tracker">
-<h2><a class="toc-backref" href="#toc-entry-1">Bug Tracker</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-5">Bug Tracker</a></h2>
 <p>Bugs are tracked on <a class="reference external" href="https://github.com/OCA/timesheet/issues">GitHub Issues</a>.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-<a class="reference external" href="https://github.com/OCA/timesheet/issues/new?body=module:%20hr_timesheet_time_control_begin_end%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**">feedback</a>.</p>
+<a class="reference external" href="https://github.com/OCA/timesheet/issues/new?body=module:%20hr_timesheet_time_control_begin_end%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**">feedback</a>.</p>
 <p>Do not contact contributors directly about support or help with technical issues.</p>
 </div>
 <div class="section" id="credits">
-<h2><a class="toc-backref" href="#toc-entry-2">Credits</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-6">Credits</a></h2>
 <div class="section" id="authors">
-<h3><a class="toc-backref" href="#toc-entry-3">Authors</a></h3>
+<h3><a class="toc-backref" href="#toc-entry-7">Authors</a></h3>
 <ul class="simple">
 <li>glueckkanja AG</li>
 </ul>
 </div>
 <div class="section" id="maintainers">
-<h3><a class="toc-backref" href="#toc-entry-4">Maintainers</a></h3>
+<h3><a class="toc-backref" href="#toc-entry-8">Maintainers</a></h3>
 <p>This module is maintained by the OCA.</p>
 <a class="reference external image-reference" href="https://odoo-community.org">
 <img alt="Odoo Community Association" src="https://odoo-community.org/logo.png" />
@@ -416,7 +449,7 @@ mission is to support the collaborative development of Odoo features and
 promote its widespread use.</p>
 <p>Current <a class="reference external" href="https://odoo-community.org/page/maintainer-role">maintainer</a>:</p>
 <p><a class="reference external image-reference" href="https://github.com/CRogos"><img alt="CRogos" src="https://github.com/CRogos.png?size=40px" /></a></p>
-<p>This module is part of the <a class="reference external" href="https://github.com/OCA/timesheet/tree/18.0/hr_timesheet_time_control_begin_end">OCA/timesheet</a> project on GitHub.</p>
+<p>This module is part of the <a class="reference external" href="https://github.com/OCA/timesheet/tree/19.0/hr_timesheet_time_control_begin_end">OCA/timesheet</a> project on GitHub.</p>
 <p>You are welcome to contribute. To learn how please visit <a class="reference external" href="https://odoo-community.org/page/Contribute">https://odoo-community.org/page/Contribute</a>.</p>
 </div>
 </div>
