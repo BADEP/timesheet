@@ -12,7 +12,7 @@ class SaleOrder(models.Model):
     def _compute_any_service_line(self):
         for record in self:
             record.any_service_line = any(
-                [x.product_type == "service" for x in record.order_line]
+                x.product_type == "service" for x in record.order_line
             )
 
 
@@ -38,5 +38,5 @@ class SaleOrderLine(models.Model):
             res["planned_date_end"] = self.task_date_end
             res["date_deadline"] = self.task_date_end
         if self.task_user_ids:
-            res["user_ids"] = [Command.link(x.id) for x in self.task_user_ids]
+            res["user_ids"] = [Command.set(self.task_user_ids.ids)]
         return res

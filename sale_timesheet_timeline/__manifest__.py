@@ -3,7 +3,7 @@
 
 {
     "name": "Dates planning in sales order lines",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Services/Project",
     "website": "https://github.com/OCA/timesheet",
     "author": "Tecnativa, Odoo Community Association (OCA)",

@@ -23,7 +23,6 @@ class TestSaleTimesheetTimeline(BaseCommon):
                 "service_policy": "ordered_prepaid",
                 "project_id": cls.project.id,
                 "uom_id": cls.env.ref("uom.product_uom_hour").id,
-                "uom_po_id": cls.env.ref("uom.product_uom_hour").id,
             }
         )
         order_form = Form(cls.env["sale.order"])
