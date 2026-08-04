@@ -21,7 +21,9 @@ class TestHrTimesheetEmployeeAnalyticTag(BaseCommon):
             {"name": "Test task", "project_id": cls.project.id}
         )
         cls.user = new_test_user(
-            cls.env, login="test-user", groups="hr_timesheet.group_hr_timesheet_user"
+            cls.env,
+            login="test-user",
+            groups="hr_timesheet.group_hr_timesheet_user,analytic.group_analytic_accounting",
         )
         cls.employee_1 = cls.env["hr.employee"].create(
             {
