@@ -15,15 +15,20 @@ msgstr ""
 
 #. module: hr_timesheet_portal
 #: model:res.groups,comment:hr_timesheet_portal.group_hr_timesheet_portal
-msgid "Add portal users who should be allowed to edit their timesheets"
+msgid "Allows users to edit timesheets through portal"
 msgstr ""
 
 #. module: hr_timesheet_portal
-#: model:res.groups,name:hr_timesheet_portal.group_hr_timesheet_portal
+#: model:res.groups.privilege,name:hr_timesheet_portal.privilege_hr_timesheet_portal
 msgid "Editable timesheets"
 msgstr ""
 
 #. module: hr_timesheet_portal
 #: model_terms:ir.ui.view,arch_db:hr_timesheet_portal.portal_my_task
 msgid "Timesheets <i class=\"fa fa-plus\"/>"
+msgstr ""
+
+#. module: hr_timesheet_portal
+#: model:res.groups,name:hr_timesheet_portal.group_hr_timesheet_portal
+msgid "User"
 msgstr ""
