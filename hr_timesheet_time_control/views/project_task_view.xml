@@ -163,7 +163,7 @@
     <record id="view_task_kanban" model="ir.ui.view">
         <field name="name">Add timesheet time controls</field>
         <field name="model">project.task</field>
-        <field name="inherit_id" ref="project.view_task_kanban" />
+        <field name="inherit_id" ref="project.view_task_card" />
         <field name="arch" type="xml">
             <xpath expr="//footer" position="inside">
                 <field

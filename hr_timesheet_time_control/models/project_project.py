@@ -1,12 +1,17 @@
 # Copyright 2019 Tecnativa - Jairo Llopis
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import typing
+
 from odoo import api, models
 
 
 class ProjectProject(models.Model):
     _name = "project.project"
-    _inherit = ["project.project", "hr.timesheet.time_control.mixin"]
+    _inherit: typing.ClassVar[list[str]] = [
+        "project.project",
+        "hr.timesheet.time_control.mixin",
+    ]
 
     @api.model
     def _relation_with_timesheet_line(self):

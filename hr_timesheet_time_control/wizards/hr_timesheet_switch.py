@@ -35,7 +35,6 @@ class HrTimesheetSwitch(models.TransientModel):
     date_time_end = fields.Datetime(string="End Time")
     task_id = fields.Many2one(
         comodel_name="project.task",
-        string="Task",
         compute="_compute_task_id",
         store=True,
         readonly=False,
@@ -50,7 +49,6 @@ class HrTimesheetSwitch(models.TransientModel):
     )
     project_id = fields.Many2one(
         comodel_name="project.project",
-        string="Project",
         compute="_compute_project_id",
         store=True,
         readonly=False,
@@ -58,7 +56,6 @@ class HrTimesheetSwitch(models.TransientModel):
     )
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         required=True,
         readonly=True,
         default=lambda self: self.env.company,
@@ -135,7 +132,7 @@ class HrTimesheetSwitch(models.TransientModel):
         domain = [("employee_id", "in", self.env.user.employee_ids.ids)]
         if context.get("active_model") == model:
             return self.env[model].browse(context["active_id"])
-        elif context.get("active_model") == "project.task":
+        if context.get("active_model") == "project.task":
             domain.append(("task_id", "=", context["active_id"]))
         elif context.get("active_model") == "project.project":
             domain += [
@@ -205,3 +202,4 @@ class HrTimesheetSwitch(models.TransientModel):
                 "view_type": "form",
                 "views": [(form_view.id, "form")],
             }
+        return None

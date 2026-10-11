@@ -6,7 +6,7 @@
 
 {
     "name": "Project timesheet time control",
-    "version": "19.0.1.0.3",
+    "version": "20.0.1.0.0",
     "category": "Project",
     "author": "Tecnativa,Odoo Community Association (OCA)",
     "maintainers": ["victoralmau"],
@@ -15,11 +15,11 @@
         "hr_timesheet",
     ],
     "data": [
-        "security/ir.model.access.csv",
         "views/account_analytic_line_view.xml",
         "views/project_project_view.xml",
         "views/project_task_view.xml",
         "wizards/hr_timesheet_switch_view.xml",
+        "security/ir.access.csv",
     ],
     "license": "AGPL-3",
     "installable": True,
