@@ -21,13 +21,13 @@ Sale Timesheet Invoice Link
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Ftimesheet-lightgray.png?logo=github
-    :target: https://github.com/OCA/timesheet/tree/19.0/sale_timesheet_invoice_link
+    :target: https://github.com/OCA/timesheet/tree/20.0/sale_timesheet_invoice_link
     :alt: OCA/timesheet
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/timesheet-19-0/timesheet-19-0-sale_timesheet_invoice_link
+    :target: https://translation.odoo-community.org/projects/timesheet-20-0/timesheet-20-0-sale_timesheet_invoice_link
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/timesheet&target_branch=19.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/timesheet&target_branch=20.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -68,7 +68,7 @@ Configuration
 
 To be able to use this module, you need these permissions:
 
-- *Timesheets / Administrator*.
+-  *Timesheets / Administrator*.
 
 Usage
 =====
@@ -86,18 +86,18 @@ Additionally, when you open an invoice that has timesheets linked to its
 sale order lines but not yet linked to the invoice itself, a warning
 alert will appear at the top of the invoice form. From there you can:
 
-- Click **Link All** to automatically link all pending timesheets to
-  this invoice.
-- Click **Select Manually** to open a filtered list of pending
-  timesheets where you can select specific ones and click **Link to
-  Invoice**.
-- Click **Dismiss** to hide the alert for this invoice.
+-  Click **Link All** to automatically link all pending timesheets to
+   this invoice.
+-  Click **Select Manually** to open a filtered list of pending
+   timesheets where you can select specific ones and click **Link to
+   Invoice**.
+-  Click **Dismiss** to hide the alert for this invoice.
 
 Known issues / Roadmap
 ======================
 
-- Add a wizard that helps mass-linking done timesheets with their
-  invoices.
+-  Add a wizard that helps mass-linking done timesheets with their
+   invoices.
 
 Bug Tracker
 ===========
@@ -105,7 +105,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/OCA/timesheet/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/timesheet/issues/new?body=module:%20sale_timesheet_invoice_link%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/timesheet/issues/new?body=module:%20sale_timesheet_invoice_link%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -120,8 +120,8 @@ Authors
 Contributors
 ------------
 
-- Jairo Llopis (`Moduon <https://www.moduon.team/>`__)
-- Emilio Pascual (`Moduon <https://www.moduon.team/>`__)
+-  Jairo Llopis (`Moduon <https://www.moduon.team/>`__)
+-  Emilio Pascual (`Moduon <https://www.moduon.team/>`__)
 
 Maintainers
 -----------
@@ -147,6 +147,6 @@ Current `maintainers <https://odoo-community.org/page/maintainer-role>`__:
 
 |maintainer-rafaelbn| |maintainer-yajo| 
 
-This module is part of the `OCA/timesheet <https://github.com/OCA/timesheet/tree/19.0/sale_timesheet_invoice_link>`_ project on GitHub.
+This module is part of the `OCA/timesheet <https://github.com/OCA/timesheet/tree/20.0/sale_timesheet_invoice_link>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.

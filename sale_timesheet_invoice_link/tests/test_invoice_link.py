@@ -161,7 +161,7 @@ class TestInvoiceLink(common.TransactionCase):
     def test_pending_timesheets_fixed_price(self):
         """Timesheets on fixed-price SO lines should appear as pending."""
         ts = self._create_timesheet(self.task_fixed)
-        self.assertEqual(ts.timesheet_invoice_type, "billable_fixed")
+        self.assertEqual(ts.billable_type, "02_billable_fixed")
         # Create invoice manually
         invoice = self.sale_order._create_invoices()
         self.assertTrue(invoice)
@@ -172,21 +172,21 @@ class TestInvoiceLink(common.TransactionCase):
         """Timesheets on timesheet-delivery SO lines should NOT be pending
         (they get auto-linked by standard flow)."""
         ts = self._create_timesheet(self.task_timesheet)
-        self.assertEqual(ts.timesheet_invoice_type, "billable_time")
+        self.assertEqual(ts.billable_type, "04_billable_time")
         invoice = self.sale_order._create_invoices()
         self.assertTrue(invoice)
         # The timesheet should be auto-linked, so not pending
         self.assertEqual(invoice.timesheet_pending_count, 0)
-        self.assertTrue(ts.timesheet_invoice_id)
+        self.assertTrue(ts.reinvoice_move_id)
 
     def test_action_link_timesheets(self):
-        """Link All should set timesheet_invoice_id on all pending."""
+        """Link All should set reinvoice_move_id on all pending."""
         ts = self._create_timesheet(self.task_fixed)
         invoice = self.sale_order._create_invoices()
         self.assertEqual(invoice.timesheet_pending_count, 1)
         invoice.action_link_timesheets()
-        self.assertTrue(ts.timesheet_invoice_id)
-        self.assertEqual(ts.timesheet_invoice_id, invoice)
+        self.assertTrue(ts.reinvoice_move_id)
+        self.assertEqual(ts.reinvoice_move_id, invoice)
         self.assertTrue(invoice.timesheet_alert_dismissed)
 
     def test_action_dismiss_timesheet_alert(self):
@@ -318,7 +318,7 @@ class TestInvoiceLink(common.TransactionCase):
         self.env.invalidate_all()
         self.assertEqual(invoice.timesheet_pending_count, 0)
         invoice.action_link_timesheets()
-        self.assertFalse(after.timesheet_invoice_id)
+        self.assertFalse(after.reinvoice_move_id)
 
     def test_no_pending_for_delivered_timesheet_without_autolink(self):
         """Delivered-timesheet lines are never offered, even if not auto-linked."""
@@ -327,7 +327,7 @@ class TestInvoiceLink(common.TransactionCase):
         self.env.invalidate_all()
         ts = self._create_timesheet(self.task_timesheet)
         self.env.invalidate_all()
-        self.assertFalse(ts.timesheet_invoice_id)
+        self.assertFalse(ts.reinvoice_move_id)
         self.assertIn(self.so_line_timesheet, invoice.invoice_line_ids.sale_line_ids)
         self.assertEqual(invoice.timesheet_pending_count, 0)
         self.assertNotIn(ts, invoice.timesheet_pending_ids)
