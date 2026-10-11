@@ -5,7 +5,6 @@
 from datetime import timedelta
 
 from odoo import api, exceptions, fields, models
-from odoo.tools.float_utils import float_compare
 
 
 class AccountAnalyticLine(models.Model):
@@ -33,9 +32,8 @@ class AccountAnalyticLine(models.Model):
                     )
                 )
             hours = (stop - start).seconds / 3600
-            rounding = self.env.ref("uom.product_uom_hour").rounding
-            if hours and float_compare(
-                hours, line.unit_amount, precision_rounding=rounding
+            if hours and self.env.ref("uom.product_uom_hour").compare(
+                hours, line.unit_amount
             ):
                 raise exceptions.ValidationError(
                     self.env._(
