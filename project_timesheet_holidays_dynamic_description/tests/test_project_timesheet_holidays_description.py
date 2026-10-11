@@ -1,6 +1,8 @@
 # © 2026 Solvos Consultoría Informática (<https://www.solvos.es>)
 # License AGPL-3 - See https://www.gnu.org/licenses/agpl-3.0.html
 
+from datetime import timedelta
+
 from odoo import Command, fields
 from odoo.tests.common import TransactionCase, tagged
 
@@ -14,7 +16,7 @@ class TestProjectTimesheetHolidaysDescription(TransactionCase):
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
 
         cls.Employee = cls.env["hr.employee"]
-        cls.LeaveType = cls.env["hr.leave.type"]
+        cls.LeaveType = cls.env["hr.work.entry.type"]
         cls.Leave = cls.env["hr.leave"]
         cls.AnalyticLine = cls.env["account.analytic.line"]
 
@@ -86,8 +88,11 @@ class TestProjectTimesheetHolidaysDescription(TransactionCase):
         cls.leave_type = cls.LeaveType.create(
             {
                 "name": "Leave Test",
-                "requires_allocation": "yes",
-                "company_id": cls.Company.id,
+                "code": "LEAVETESTDYN",
+                "requires_allocation": True,
+                "request_unit": "day",
+                "unit_of_measure": "day",
+                "count_as": "absence",
             }
         )
 
@@ -95,7 +100,7 @@ class TestProjectTimesheetHolidaysDescription(TransactionCase):
             {
                 "name": "Test Allocation",
                 "employee_id": cls.employee.id,
-                "holiday_status_id": cls.leave_type.id,
+                "work_entry_type_id": cls.leave_type.id,
                 "number_of_days": 30,
                 "state": "confirm",
             }
@@ -103,13 +108,17 @@ class TestProjectTimesheetHolidaysDescription(TransactionCase):
         cls.allocation._action_validate()
 
     def _create_leave_with_timesheet(self, days_offset=0):
+        # Use the next Monday so the leave falls on a working day whatever
+        # the day the tests run
+        today = fields.Date.today()
+        leave_date = today + timedelta(days=(7 - today.weekday()) % 7)
         self.leave = self.Leave.create(
             {
                 "name": "Vacations",
                 "employee_id": self.employee.id,
-                "holiday_status_id": self.leave_type.id,
-                "request_date_from": fields.Date.today(),
-                "request_date_to": fields.Date.today(),
+                "work_entry_type_id": self.leave_type.id,
+                "request_date_from": leave_date,
+                "request_date_to": leave_date,
             }
         )
 
