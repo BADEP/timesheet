@@ -1,162 +1,181 @@
-import {browser} from "@web/core/browser/browser";
-import publicWidget from "@web/legacy/js/public/public_widget";
+import {Interaction} from "@web/public/interaction";
+import {registry} from "@web/core/registry";
 import {user} from "@web/core/user";
 
-export const HrTimesheetPortal = publicWidget.Widget.extend({
-  selector: "div.hr_timesheet_portal",
-  disabledInEditableMode: true,
-  events: {
-    "click h5 .fa-plus": "_onclick_add",
-    "click tr[data-line-id].editable:not(.edit)": "_onclick_edit",
-    "click tr[data-line-id].editable i.fa-remove": "_onclick_delete",
-    "click button.submit": "_onclick_submit",
-    "submit form": "_onclick_submit",
-    "click button.cancel": "_reload_timesheet",
-  },
+export class HrTimesheetPortal extends Interaction {
+  static selector = "div.hr_timesheet_portal";
 
-  /**
-   * @override
-   */
-  init() {
-    this._super(...arguments);
-    this.orm = this.bindService("orm");
-    this.ui = this.bindService("ui");
-  },
+  setup() {
+    this.orm = this.services.orm;
+    this.ui = this.services.ui;
+    this.addListener(this.el, "click", this._onClick);
+    this.addListener(this.el, "submit", this._onclick_submit);
+  }
 
-  _onclick_delete: async function (e) {
-    e.stopPropagation();
+  _onClick(e) {
+    const target = e.target;
+    if (target.closest("h5 .fa-plus")) {
+      return this._onclick_add();
+    }
+    if (target.closest("button.submit")) {
+      return this._onclick_submit(e);
+    }
+    if (target.closest("button.cancel")) {
+      return this._reload_timesheet();
+    }
+    if (target.closest("tr[data-line-id].editable i.fa-remove")) {
+      e.stopPropagation();
+      return this._onclick_delete(e);
+    }
+    const editRow = target.closest("tr[data-line-id].editable:not(.edit)");
+    if (editRow) {
+      return this._edit_line(editRow.dataset.lineId);
+    }
+  }
+
+  async _onclick_delete(e) {
     this.ui.block();
-    const line = jQuery(e.currentTarget).parents("tr").data("line-id");
-    await this.orm
-      .unlink("account.analytic.line", [line])
-      .then(this.proxy("_reload_timesheet"))
-      .catch(this.proxy("_display_failure"))
-      .finally(() => {
-        this.ui.unblock();
-      });
-  },
+    const line = parseInt(e.target.closest("tr").dataset.lineId, 10);
+    try {
+      await this.waitFor(this.orm.unlink("account.analytic.line", [line]));
+      await this._reload_timesheet();
+    } catch (error) {
+      this._display_failure(error);
+    } finally {
+      this.ui.unblock();
+    }
+  }
 
-  _onclick_add: async function () {
-    const self = this;
-    const uid = user.userId;
-    const account = this.$el.data("account-id");
-    const project = this.$el.data("project-id");
-    const task = this.$el.data("task-id");
-
+  async _onclick_add() {
+    const dataset = this.el.dataset;
     this.ui.block();
-    await this.orm
-      .call("account.analytic.line", "create", [
-        [
-          {
-            user_id: uid,
-            account_id: account,
-            project_id: project,
-            task_id: task,
-            unit_amount: 0,
-            name: "/",
-          },
-        ],
-      ])
-      .then(function (line_id) {
-        return self._reload_timesheet().then(function () {
-          browser.setTimeout(() => self._edit_line(line_id), 0);
-        });
-      })
-      .catch(this.proxy("_display_failure"))
-      .finally(() => {
-        this.ui.unblock();
-      });
-  },
+    try {
+      const line_ids = await this.waitFor(
+        this.orm.call("account.analytic.line", "create", [
+          [
+            {
+              user_id: user.userId,
+              account_id: parseInt(dataset.accountId, 10),
+              project_id: parseInt(dataset.projectId, 10),
+              task_id: parseInt(dataset.taskId, 10),
+              unit_amount: 0,
+              name: "/",
+            },
+          ],
+        ])
+      );
+      await this._reload_timesheet();
+      this.waitForTimeout(() => this._edit_line(line_ids), 0);
+    } catch (error) {
+      this._display_failure(error);
+    } finally {
+      this.ui.unblock();
+    }
+  }
 
-  _onclick_edit: function (e) {
-    return this._edit_line(jQuery(e.target).parents("tr").data("line-id"));
-  },
-
-  _onclick_submit: async function (e) {
+  async _onclick_submit(e) {
     e.preventDefault();
+    const tr = e.target.closest("tr");
+    const form = tr && tr.querySelector("form");
+    if (!form) {
+      return;
+    }
     this.ui.block();
-    const $tr = jQuery(e.target).parents("tr"),
-      data = Object.fromEntries(
-        $tr
-          .find("form")
-          .serializeArray()
-          .map((field) => [field.name, field.value])
+    const data = {};
+    for (const input of this.el.querySelectorAll(
+      "input[form='hr_timesheet_portal_form']"
+    )) {
+      data[input.name] = input.value;
+    }
+    try {
+      await this.waitFor(
+        this.orm.write("account.analytic.line", [parseInt(tr.dataset.lineId, 10)], data)
       );
-    await this.orm
-      .write("account.analytic.line", [$tr.data("line-id")], data)
-      .then(this.proxy("_reload_timesheet"))
-      .catch(this.proxy("_display_failure"))
-      .finally(() => {
-        this.ui.unblock();
-      });
-  },
+      await this._reload_timesheet();
+    } catch (error) {
+      this._display_failure(error);
+    } finally {
+      this.ui.unblock();
+    }
+  }
 
-  _reload_timesheet: function () {
-    this.$el.children("div.alert").remove();
-    return $.ajax({
-      dataType: "html",
-    }).then(function (data) {
-      const timesheets = jQuery.parseHTML(data).filter(function (element) {
-        const dhtp = jQuery(element).find("div.hr_timesheet_portal");
-        return dhtp.length > 0;
-      });
-
-      const $tableTimesheet = $(".hr_timesheet_portal .o_portal_my_doc_table");
-      const $tableSubtotal = $(".hr_timesheet_portal .container_subtotal table");
-      $tableTimesheet.find("tbody").remove();
-      $tableSubtotal.find("tbody").remove();
-
-      const $tbodyTimesheet = jQuery(timesheets).find(
-        ".hr_timesheet_portal .o_portal_my_doc_table tbody"
-      );
-      const $tbodySubtotal = jQuery(timesheets).find(
-        ".hr_timesheet_portal .container_subtotal table tbody"
-      );
-      if ($tbodyTimesheet.length && $tbodyTimesheet.children().length > 0) {
-        $tableTimesheet.append($tbodyTimesheet);
-      }
-      if ($tbodySubtotal.length && $tbodySubtotal.children().length > 0) {
-        $tableSubtotal.append($tbodySubtotal);
-      }
-    });
-  },
-
-  _display_failure: function (error) {
-    this.$el.prepend(
-      jQuery('<div class="alert alert-danger">').text(error.data.message)
+  async _reload_timesheet() {
+    for (const alert of this.el.querySelectorAll(":scope > div.alert")) {
+      alert.remove();
+    }
+    const response = await this.waitFor(fetch(window.location.href));
+    const html = await this.waitFor(response.text());
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const tableTimesheet = document.querySelector(
+      ".hr_timesheet_portal .o_portal_my_doc_table"
     );
-  },
+    const tableSubtotal = document.querySelector(
+      ".hr_timesheet_portal .container_subtotal table"
+    );
+    for (const tbody of tableTimesheet?.querySelectorAll("tbody") || []) {
+      tbody.remove();
+    }
+    for (const tbody of tableSubtotal?.querySelectorAll("tbody") || []) {
+      tbody.remove();
+    }
+    const tbodyTimesheet = doc.querySelector(
+      ".hr_timesheet_portal .o_portal_my_doc_table tbody"
+    );
+    const tbodySubtotal = doc.querySelector(
+      ".hr_timesheet_portal .container_subtotal table tbody"
+    );
+    if (tableTimesheet && tbodyTimesheet && tbodyTimesheet.children.length) {
+      tableTimesheet.append(tbodyTimesheet);
+    }
+    if (tableSubtotal && tbodySubtotal && tbodySubtotal.children.length) {
+      tableSubtotal.append(tbodySubtotal);
+    }
+  }
+
+  _display_failure(error) {
+    const alert = document.createElement("div");
+    alert.className = "alert alert-danger";
+    alert.textContent = error?.data?.message || error?.message || String(error);
+    this.el.prepend(alert);
+  }
 
   _edit_line(line_id) {
-    const $line = this.$(`tr[data-line-id="${line_id}"]`),
-      $edit_line = $line.clone();
-    this.$("tbody tr.edit").remove();
-    this.$("tbody tr").show();
-    $line.before($edit_line);
-    $edit_line.children("[data-field-name]").each(function () {
-      const $this = jQuery(this),
-        $input = jQuery("<input>", {
-          class: "form-control",
-          type: $this.data("field-type") || "text",
-          value: $this.data("field-value") || $this.text(),
-          form: "hr_timesheet_portal_form",
-          name: $this.data("field-name"),
-        });
-      $this.empty().append($input);
-    });
-    $edit_line.addClass("edit");
-    const $form = jQuery("<form>", {
-        id: "hr_timesheet_portal_form",
-      }),
-      $submit = jQuery('<button class="btn btn-primary submit fa fa-cloud-upload">'),
-      $cancel = jQuery(
-        '<button class="btn btn-outline-primary cancel fa fa-undo" type="reset">'
-      );
-    $edit_line.children("td:last-child").append($form);
-    $form.append($submit, $cancel);
-    $edit_line.find("input:first").focus();
-    $line.hide();
-  },
-});
+    const line = this.el.querySelector(`tr[data-line-id="${line_id}"]`);
+    if (!line) {
+      return;
+    }
+    for (const row of this.el.querySelectorAll("tbody tr.edit")) {
+      row.remove();
+    }
+    for (const row of this.el.querySelectorAll("tbody tr")) {
+      row.style.display = "";
+    }
+    const edit_line = line.cloneNode(true);
+    line.before(edit_line);
+    for (const cell of edit_line.querySelectorAll(":scope > [data-field-name]")) {
+      const input = document.createElement("input");
+      input.className = "form-control";
+      input.type = cell.dataset.fieldType || "text";
+      input.value = cell.dataset.fieldValue || cell.textContent.trim();
+      input.setAttribute("form", "hr_timesheet_portal_form");
+      input.name = cell.dataset.fieldName;
+      cell.replaceChildren(input);
+    }
+    edit_line.classList.add("edit");
+    const form = document.createElement("form");
+    form.id = "hr_timesheet_portal_form";
+    const submit = document.createElement("button");
+    submit.className = "btn btn-primary submit fa fa-cloud-upload";
+    const cancel = document.createElement("button");
+    cancel.className = "btn btn-outline-primary cancel fa fa-undo";
+    cancel.type = "reset";
+    form.append(submit, cancel);
+    edit_line.querySelector(":scope > td:last-child").append(form);
+    edit_line.querySelector("input")?.focus();
+    line.style.display = "none";
+  }
+}
 
-publicWidget.registry.HrTimesheetPortal = HrTimesheetPortal;
+registry
+  .category("public.interactions")
+  .add("hr_timesheet_portal.hr_timesheet_portal", HrTimesheetPortal);
