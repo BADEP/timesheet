@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- Copyright 2024 Tecnativa - Pedro M. Baeza
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
 <odoo>
@@ -26,11 +26,11 @@
                             >
                                 <img
                                     t-if="record.task_user_ids"
+                                    class="mr8"
                                     t-attf-src="/web/image/res.users/#{user}/avatar_128/16x16"
                                     t-att-title="record.user"
                                     width="16"
                                     height="16"
-                                    class="mr8"
                                     alt="User"
                                 />
                             </t>
@@ -38,9 +38,9 @@
                                 <t t-esc="record.name.split('\n')[0]" />
                             </span>
                             <small
-                                name="planned_hours"
-                                class="text-info ml4"
                                 t-if="record.product_uom_qty"
+                                class="text-info ml4"
+                                name="planned_hours"
                             >
                                 <t
                                     t-out="formatters.get('float_time')(record.product_uom_qty)"
