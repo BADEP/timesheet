@@ -6,9 +6,7 @@ from odoo.tests.common import TransactionCase
 
 
 class TestAccountAnalyticLineDefaultGet(TransactionCase):
-    @patch(
-        "odoo.addons.account.models.account_analytic_line.AccountAnalyticLine.default_get"
-    )
+    @patch("odoo.addons.analytic.models.analytic_line.AccountAnalyticLine.default_get")
     def test_project_id_removed_when_is_timesheet_without_default_project(
         self, mock_parent_default_get
     ):
