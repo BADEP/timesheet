@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <template
         id="portal_my_timesheets_inherit_begin_end"
@@ -41,12 +41,12 @@
         <xpath expr="//tbody//tr/td[hasclass('text-end')]" position="before">
             <td>
                 <span
-                    t-esc="timesheet.time_begin"
+                    t-out="timesheet.time_begin"
                     t-options='{"widget": "float_time"}'
                 />
             </td>
             <td>
-                <span t-esc="timesheet.time_end" t-options='{"widget": "float_time"}' />
+                <span t-out="timesheet.time_end" t-options='{"widget": "float_time"}' />
             </td>
         </xpath>
     </template>
@@ -62,12 +62,12 @@
         <xpath expr="//table/tr/td[hasclass('text-end')]" position="before">
             <td>
                 <span
-                    t-esc="timesheet.time_begin"
+                    t-out="timesheet.time_begin"
                     t-options='{"widget": "float_time"}'
                 />
             </td>
             <td>
-                <span t-esc="timesheet.time_end" t-options='{"widget": "float_time"}' />
+                <span t-out="timesheet.time_end" t-options='{"widget": "float_time"}' />
             </td>
         </xpath>
     </template>
