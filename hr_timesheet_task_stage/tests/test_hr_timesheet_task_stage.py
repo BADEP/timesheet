@@ -7,6 +7,12 @@ from odoo.addons.base.tests.common import BaseCommon
 
 
 class TestHrTimesheetTaskStage(BaseCommon):
+    _test_user_groups = (
+        "base.group_user",
+        "hr_timesheet.group_hr_timesheet_approver",
+        "project.group_project_user",
+    )
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -25,8 +31,8 @@ class TestHrTimesheetTaskStage(BaseCommon):
         )
         cls.test_user = cls.env["res.users"].create(
             {
-                "name": "Test User",
-                "login": "test_user",
+                "name": "Test Timesheet User",
+                "login": "test_timesheet_user",
                 "email": "testuser@example.com",
             }
         )
