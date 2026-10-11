@@ -1,5 +1,6 @@
 # Copyright 2025 Moduon Team S.L.
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/LGPL-3.0)
+import typing
 from contextlib import suppress
 
 from odoo import api, fields, models
@@ -7,7 +8,10 @@ from odoo import api, fields, models
 
 class ProjectTask(models.Model):
     _name = "project.task"
-    _inherit = ["project.task", "analytic.plan.fields.mixin"]
+    _inherit: typing.ClassVar[list[str]] = [
+        "project.task",
+        "analytic.plan.fields.mixin",
+    ]
 
     account_id = fields.Many2one(
         compute="_compute_task_analytic_accounts",

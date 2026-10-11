@@ -111,6 +111,8 @@ class HrTimesheet(TestCommonSaleTimesheet, MailCase):
             ]
         )
         cls.task1.sale_line_id = cls.so_line_1
+        # Odoo 20: only confirmed orders have quantities to invoice
+        cls.so.action_confirm()
         cls.so._create_invoices()
 
     @classmethod
@@ -120,6 +122,8 @@ class HrTimesheet(TestCommonSaleTimesheet, MailCase):
 
     def test_analytic_account_tracking(self):
         """Changes to primary and extra-plan task accounts are tracked."""
+        # Odoo 20: tracking assertions need a lang in the context
+        self.env = self.env(context=dict(self.env.context, lang="en_US"))
         project_account = self.env["account.analytic.account"].create(
             {"name": "Other project", "plan_id": self.analytic_plan.id}
         )
