@@ -9,14 +9,14 @@
 {
     "name": "CRM Timesheet",
     "category": "Customer Relationship Management",
-    "version": "19.0.1.1.0",
+    "version": "20.0.1.0.0",
     "depends": ["crm", "hr_timesheet_time_control"],
     "data": [
-        "security/ir.model.access.csv",
         "views/crm_lead_view.xml",
         "views/crm_team_view.xml",
         "views/hr_timesheet_stop_view.xml",
         "views/hr_timesheet_view.xml",
+        'security/ir.access.csv',
     ],
     "author": "Tecnativa, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/timesheet",
