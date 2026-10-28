@@ -2,11 +2,11 @@
 # Copyright 2025 Tecnativa - Víctor Martínez
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0
 
-from datetime import date, datetime, time, timedelta
+from datetime import date, time, timedelta
 
 from freezegun import freeze_time
 
-from odoo import exceptions
+from odoo import exceptions, fields
 from odoo.tests import Form, new_test_user
 from odoo.tests.common import users
 from odoo.tools.float_utils import float_compare
@@ -44,7 +44,7 @@ class TestProjectTimesheetTimeControlBase(BaseCommon):
             .with_user(cls.user)
             .create(
                 {
-                    "date_time": datetime.now() - timedelta(hours=1),
+                    "date_time": fields.Datetime.now() - timedelta(hours=1),
                     "task_id": cls.task.id,
                     "project_id": cls.project.id,
                     "account_id": cls.analytic_account.id,
@@ -75,13 +75,17 @@ class TestProjectTimesheetTimeControlBase(BaseCommon):
 
 
 class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
+    _test_user_groups = None
+
     def test_aal_from_other_employee_no_button(self):
         """Lines from other employees have no resume/stop button."""
         self.line.employee_id = self.other_employee
         self.assertFalse(self.line.show_time_control)
 
     def test_create_analytic_line(self):
-        line = self._create_analytic_line(datetime(2016, 3, 24, 3), tz="EST")
+        line = self._create_analytic_line(
+            fields.Datetime.to_datetime("2016-03-24 03:00:00"), tz="EST"
+        )
         self.assertEqual(line.date, date(2016, 3, 23))
 
     def test_create_analytic_line_with_string_datetime(self):
@@ -89,23 +93,33 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
         self.assertEqual(line.date, date(2016, 3, 23))
 
     def test_write_analytic_line(self):
-        line = self._create_analytic_line(datetime.now())
+        line = self._create_analytic_line(fields.Datetime.now())
         line.with_context(tz="EST").date_time = "2016-03-24 03:00:00"
         self.assertEqual(line.date, date(2016, 3, 23))
 
     def test_write_analytic_line_date(self):
-        line = self._create_analytic_line(datetime(2016, 3, 24, 12, 0))
-        line2 = self._create_analytic_line(datetime(2016, 3, 23, 13, 0))
+        line = self._create_analytic_line(
+            fields.Datetime.to_datetime("2016-03-24 12:00:00")
+        )
+        line2 = self._create_analytic_line(
+            fields.Datetime.to_datetime("2016-03-23 13:00:00")
+        )
         lines = self.env["account.analytic.line"]
         lines += line
         lines += line2
-        lines.write({"date": datetime(2016, 1, 1)})
-        self.assertEqual(line.date_time, datetime(2016, 1, 1, 12, 0))
-        self.assertEqual(line2.date_time, datetime(2016, 1, 1, 13, 0))
+        lines.write({"date": fields.Datetime.to_datetime("2016-01-01 00:00:00")})
+        self.assertEqual(
+            line.date_time, fields.Datetime.to_datetime("2016-01-01 12:00:00")
+        )
+        self.assertEqual(
+            line2.date_time, fields.Datetime.to_datetime("2016-01-01 13:00:00")
+        )
 
     def test_write_analytic_line_with_string_datetime(self):
-        line = self._create_analytic_line(datetime.now())
-        line.with_context(tz="EST").date_time = datetime(2016, 3, 24, 3)
+        line = self._create_analytic_line(fields.Datetime.now())
+        line.with_context(tz="EST").date_time = fields.Datetime.to_datetime(
+            "2016-03-24 03:00:00"
+        )
         self.assertEqual(line.date, date(2016, 3, 23))
 
     def _create_analytic_line(self, datetime_, tz=None):
@@ -139,7 +153,7 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
         self.assertEqual(self.line.show_time_control, "resume")
         resume_action = self.line.button_resume_work()
         wizard = self._create_wizard(resume_action, self.line)
-        self.assertLessEqual(wizard.date_time, datetime.now())
+        self.assertLessEqual(wizard.date_time, fields.Datetime.now())
         self.assertEqual(wizard.analytic_line_id, self.line)
         self.assertEqual(wizard.name, self.line.name)
         self.assertEqual(wizard.project_id, self.line.project_id)
@@ -202,7 +216,7 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
         self.assertEqual(self.project.show_time_control, "start")
         start_action = self.project.button_start_work()
         wizard = self._create_wizard(start_action, self.project)
-        self.assertLessEqual(wizard.date_time, datetime.now())
+        self.assertLessEqual(wizard.date_time, fields.Datetime.now())
         self.assertEqual(wizard.analytic_line_id.account_id, self.project.account_id)
         self.assertEqual(wizard.name, "No task here")
         self.assertEqual(wizard.project_id, self.project)
@@ -231,7 +245,7 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
         self.assertEqual(self.task.show_time_control, "start")
         start_action = self.task.button_start_work()
         wizard = self._create_wizard(start_action, self.task)
-        self.assertLessEqual(wizard.date_time, datetime.now())
+        self.assertLessEqual(wizard.date_time, fields.Datetime.now())
         self.assertEqual(
             wizard.analytic_line_id.account_id, self.task.project_id.account_id
         )
@@ -283,10 +297,12 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
         line = self.line.sudo().copy(
             {"task_id": False, "project_id": self.project.id, "name": "No task here"}
         )
-        line.date_time = datetime(2020, 8, 1, 10, 0, 0)
+        line.date_time = fields.Datetime.to_datetime("2020-08-01 10:00:00")
         line.unit_amount = 2.0
-        self.assertTrue(line.date_time_end == datetime(2020, 8, 1, 12, 0, 0))
-        line.date_time_end = datetime(2020, 8, 1, 15, 0, 0)
+        self.assertTrue(
+            line.date_time_end == fields.Datetime.to_datetime("2020-08-01 12:00:00")
+        )
+        line.date_time_end = fields.Datetime.to_datetime("2020-08-01 15:00:00")
         self.assertFalse(float_compare(line.unit_amount, 5.0, precision_digits=2))
 
     @users("test-user")
@@ -309,7 +325,7 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
             .create(
                 {
                     "date": date(2023, 1, 10),
-                    "date_time": datetime(2023, 1, 10, 8, 0, 0),
+                    "date_time": fields.Datetime.to_datetime("2023-01-10 08:00:00"),
                     "unit_amount": 2.0,
                     "project_id": self.project.id,
                     "name": "Test line",
@@ -332,11 +348,11 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
             .with_context(default_product_uom_id=hour_uom.id),
             view=self.env.ref("hr_timesheet_time_control.hr_timesheet_line_form"),
         )
-        form.date_time = datetime(2023, 1, 1, 8, 0, 0)
-        form.date_time_end = datetime(2023, 1, 1, 10, 0, 0)
+        form.date_time = fields.Datetime.to_datetime("2023-01-01 08:00:00")
+        form.date_time_end = fields.Datetime.to_datetime("2023-01-01 10:00:00")
         self.assertEqual(form.unit_amount, 2.0)
         # Changing end time updates unit_amount
-        form.date_time_end = datetime(2023, 1, 1, 12, 0, 0)
+        form.date_time_end = fields.Datetime.to_datetime("2023-01-01 12:00:00")
         self.assertEqual(form.unit_amount, 4.0)
         self.assertEqual(form.date, date(2023, 1, 1))
 
@@ -348,7 +364,7 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
             .with_context(default_product_uom_id=hour_uom.id),
             view=self.env.ref("hr_timesheet_time_control.hr_timesheet_line_form"),
         )
-        form.date_time = datetime(2023, 1, 1, 8, 0, 0)
+        form.date_time = fields.Datetime.to_datetime("2023-01-01 08:00:00")
         # Setting end date to False should set unit_amount to 0
         form.date_time_end = False
         self.assertEqual(form.unit_amount, 0)
@@ -381,17 +397,21 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
             .create(
                 {
                     "date": date(2023, 1, 1),
-                    "date_time": datetime(2023, 1, 1, 8, 0, 0),
+                    "date_time": fields.Datetime.to_datetime("2023-01-01 08:00:00"),
                     "project_id": self.project.id,
                     "name": "Test line",
                 }
             )
         )
-        self.assertEqual(line.date_time, datetime(2023, 1, 1, 8, 0, 0))
+        self.assertEqual(
+            line.date_time, fields.Datetime.to_datetime("2023-01-01 08:00:00")
+        )
         # Changing date should not change time part
         line.date = date(2023, 1, 3)
         self.assertEqual(line.date, date(2023, 1, 3))
-        self.assertEqual(line.date_time, datetime(2023, 1, 3, 8, 0, 0))
+        self.assertEqual(
+            line.date_time, fields.Datetime.to_datetime("2023-01-03 08:00:00")
+        )
 
     def test_create_with_date_and_different_date_time(self):
         line = (
@@ -400,11 +420,13 @@ class TestProjectTimesheetTimeControl(TestProjectTimesheetTimeControlBase):
             .create(
                 {
                     "date": date(2023, 1, 1),
-                    "date_time": datetime(2023, 1, 3, 8, 0, 0),
+                    "date_time": fields.Datetime.to_datetime("2023-01-03 08:00:00"),
                     "project_id": self.project.id,
                     "name": "Test line",
                 }
             )
         )
         self.assertEqual(line.date, date(2023, 1, 3))
-        self.assertEqual(line.date_time, datetime(2023, 1, 3, 8, 0, 0))
+        self.assertEqual(
+            line.date_time, fields.Datetime.to_datetime("2023-01-03 08:00:00")
+        )
