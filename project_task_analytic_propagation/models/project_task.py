@@ -1,6 +1,5 @@
 # Copyright 2025 Moduon Team S.L.
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/LGPL-3.0)
-import typing
 from contextlib import suppress
 
 from odoo import api, fields, models
@@ -8,7 +7,7 @@ from odoo import api, fields, models
 
 class ProjectTask(models.Model):
     _name = "project.task"
-    _inherit: typing.ClassVar[list[str]] = [
+    _inherit = [  # noqa: RUF012
         "project.task",
         "analytic.plan.fields.mixin",
     ]
