@@ -1,14 +1,12 @@
 # Copyright 2019 Tecnativa - Jairo Llopis
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import typing
-
 from odoo import api, models
 
 
 class ProjectTask(models.Model):
     _name = "project.task"
-    _inherit: typing.ClassVar[list[str]] = [
+    _inherit = [  # noqa: RUF012
         "project.task",
         "hr.timesheet.time_control.mixin",
     ]
